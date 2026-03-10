@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>张治通_高级 PHP 开发工程师简历</title>
+    <style>
+        /* 全局样式 */
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, 'Microsoft YaHei', sans-serif; 
+            font-size: 10pt; 
+            line-height: 1.35; 
+            color: #222; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #fff; 
+            padding: 20px;
+        }
+        
+        /* 标题样式 */
+        h1 { margin: 0 0 4px 0; font-size: 26pt; color: #000; letter-spacing: -0.5px; }
+        h3 { 
+            border-bottom: 2px solid #eee; 
+            padding-bottom: 5px; 
+            margin-top: 25px; 
+            margin-bottom: 10px;
+            color: #333; 
+            font-size: 12pt;
+            clear: both; 
+        }
+        
+        strong { color: #000; font-weight: bold; }
+        em { font-style: italic; color: #555; }
+
+        /* 头部布局 */
+        .header-box { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid #333; 
+            padding-bottom: 12px; 
+            margin-bottom: 15px; 
+        }
+        .header-info { flex: 1; }
+        
+        .job-title { 
+            font-size: 13pt; 
+            font-weight: bold; 
+            color: #2c3e50; 
+            margin-bottom: 6px; 
+        }
+        .contact-info { 
+            font-size: 9.5pt; 
+            color: #555; 
+            line-height: 1.4; 
+        }
+
+        /* 头像样式 */
+        .avatar-box { 
+            width: 75px; 
+            height: 95px; 
+            border: 1px solid #ddd; 
+            overflow: hidden; 
+            margin-left: 15px; 
+            flex-shrink: 0; 
+            border-radius: 4px; 
+            background: #f5f5f5; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block;
+        }
+        .avatar-placeholder {
+            font-size: 9px; 
+            color: #999; 
+            text-align: center; 
+            line-height: 1.2;
+            display: none; /* 默认隐藏，图片加载失败时显示 */
+        }
+
+        /* 列表样式 */
+        ul { margin: 5px 0 15px 0; padding-left: 20px; }
+        li { margin-bottom: 4px; }
+
+        /* 项目经历样式 - 修改版 */
+        .project-item { 
+            margin-bottom: 15px; 
+            page-break-inside: avoid; 
+        }
+        .project-header {
+            /* 移除 flex space-between，改为行内显示 */
+            margin-bottom: 4px;
+            font-weight: bold;
+            font-size: 11pt;
+            color: #2c3e50;
+        }
+        .project-name { 
+            color: #2c3e50; 
+        }
+        .project-separator {
+            color: #999;
+            margin: 0 8px;
+            font-weight: normal;
+        }
+        .project-role { 
+            font-style: italic; 
+            color: #666; 
+            font-size: 10pt; 
+            font-weight: normal;
+        }
+        .project-desc {
+            margin: 0;
+            text-align: justify;
+            color: #333;
+        }
+
+        /* 工作经历段落 */
+        .job-item {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+        .job-header {
+            font-weight: bold;
+            color: #333;
+            font-size: 10.5pt;
+        }
+        .job-date {
+            float: right;
+            font-weight: normal; 
+            font-style: italic; 
+            color: #666;
+            font-size: 9.5pt;
+        }
+
+        /* 打印专用设置 */
+        @media print {
+            body { 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0; 
+                box-shadow: none; 
+                width: 100%;
+            }
+            @page { 
+                margin: 0.5cm; 
+                size: A4; 
+            }
+            /* 强制打印背景色 */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 头部区域 -->
+<div class="header-box">
+  <div class="header-info">
+    <h1>张治通</h1>
+    <div class="job-title">
+      高级 PHP 开发工程师 | 全栈开发者 | AI 技术应用探索者
+    </div>
+    <div class="contact-info">
+      🕒 <strong>7 年</strong>一线开发经验 &nbsp;&nbsp;|&nbsp;&nbsp; 
+      📱 13242305375 &nbsp;&nbsp;|&nbsp;&nbsp; 
+      📧 997097287@qq.com &nbsp;&nbsp;|&nbsp;&nbsp; 
+      📍 广州 &nbsp;&nbsp;|&nbsp;&nbsp; 
+      💼 随时到岗
+    </div>
+  </div>
+  
+  <!-- 头像区域 -->
+  <div class="avatar-box">
+    <img src="avatar.jpg" alt="张治通证件照" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="avatar-placeholder">[照片<br>未找到]<br><span style="font-size:7px">请命名<br>avatar.jpg</span></div>
+  </div>
+</div>
+
+<!-- 个人总结 -->
+<h3>🟢 个人总结</h3>
+<p>拥有<strong>7 年</strong> PHP 全栈开发经验，精通 ThinkPHP 框架生态，具备从 0 到 1 独立构建高并发电商、物联网及金融类平台的能力。<strong>热衷于 AI 技术与传统后端开发的融合</strong>，擅长利用 LLM（如 DeepSeek、ChatGPT）进行代码重构、自动化测试及智能业务逻辑设计。具备深厚的 Linux 运维功底及数据库调优经验，致力于通过技术手段提升系统稳定性与开发效率，是一位能把控架构又能落地细节的实战型工程师。</p>
+
+<!-- 核心技术栈 -->
+<h3>🛠 核心技术栈</h3>
+<ul>
+    <li><strong>后端核心</strong>: 精通 <strong>PHP 5/7/8</strong>，深入理解 <strong>ThinkPHP (3.2-8.0)</strong> 源码及生命周期；熟悉 Laravel 框架机制；熟练掌握 Swoole/WebSocket 实现长连接服务及高并发场景下的异步处理。</li>
+    <li><strong>AI 与大模型应用</strong>: 具备本地大模型（<strong>DeepSeek LLM</strong>）部署与调试经验，能通过 API 集成实现文本分析及代码辅助生成；熟练运用 <strong>Prompt Engineering</strong> 优化代码质量，利用 AI 工具进行遗留代码重构与单元测试编写，显著提升开发效率。</li>
+    <li><strong>数据库与缓存</strong>: <strong>熟练 MySQL 索引优化、事务隔离级别控制、锁机制应用及慢查询分析</strong>，掌握分库分表策略；熟练使用 <strong>Redis</strong> 实现缓存穿透/雪崩解决方案及消息队列（List/Stream），保障数据一致性。</li>
+    <li><strong>全栈与运维</strong>: 熟练 <strong>Uni-app/微信小程序</strong> 原生开发、Vue.js；精通 <strong>LNMP/LAMP</strong> 环境搭建与调优，使用 Docker、Git、Shell 脚本，具备服务器安全加固及高可用集群部署经验。</li>
+    <li><strong>第三方集成</strong>: 拥有丰富的支付体系对接经验（微信/支付宝/银联/iOS IAP/Google Pay），熟悉 OAuth2.0 及各类开放平台 API 对接，具备复杂的硬件协议解析能力。</li>
+</ul>
+
+<!-- 工作经历 -->
+<h3>💼 工作经历</h3>
+
+<div class="job-item">
+    <div class="job-header">
+        广州市哈游·信瀚·源道（集团） | 高级 PHP 开发工程师 / 项目主程 
+        <span class="job-date">2022.07 – 2025.12</span>
+    </div>
+    <p style="margin: 4px 0 0 0; clear:both;">
+        担任多个高流量项目的主程，负责系统架构设计、核心代码编写及技术选型。<strong>引入 AI 辅助开发流程</strong>，利用大模型自动生成接口文档、SQL 优化建议及复杂算法逻辑，显著缩短研发周期。主导了潮玩盲盒平台的高并发架构演进及灵活用工平台的资金安全体系建设，通过精细化监控与容错机制，保障系统长期稳定运行。
+    </p>
+</div>
+
+<div class="job-item">
+    <div class="job-header">
+        广州房旺旺网络科技有限公司 | PHP 开发工程师 
+        <span class="job-date">2020.08 – 2022.04</span>
+    </div>
+    <p style="margin: 4px 0 0 0; clear:both;">
+        负责房产平台的核心架构升级与生态建设。主导将原基于 <strong>ThinkPHP 3.2</strong> 的公众号 H5 系统，完整迁移重构至 <strong>ThinkPHP 5 + 微信小程序</strong> 架构。在仅由后端与前端两人组成的精简团队中，高效协同完成全链路开发，独立承担后端所有业务逻辑、数据库设计及第三方服务集成，确保系统在迁移过程中业务零中断，显著提升了用户体验与维护效率。
+    </p>
+</div>
+
+<div class="job-item">
+    <div class="job-header">
+        广州金的科技 / 欧轩网络科技 | PHP 开发工程师 
+        <span class="job-date">2018.07 – 2020.08</span>
+    </div>
+    <p style="margin: 4px 0 0 0; clear:both;">
+        参与大型跨境电商及 O2O 商城系统的迭代维护，负责支付模块与第三方 API 对接。在此期间拓展技术栈，学习并应用 <strong>Python、Golang</strong> 语言及 <strong>Laravel、Yii</strong> 框架，提升了多语言协作与异构系统整合能力。
+    </p>
+</div>
+
+<!-- 重点项目经历 -->
+<h3>🚀 重点项目经历</h3>
+
+<!-- 项目 1 -->
+<div class="project-item">
+    <div class="project-header">
+        <span class="project-name">燎羽潮玩盲盒电商平台</span>
+        <span class="project-separator">|</span>
+        <span class="project-role">项目主程</span>
+    </div>
+    <p class="project-desc">
+        针对“盲盒抽赏”场景的瞬时高并发挑战，设计基于 <strong>Redis Lua 脚本</strong> 的库存预扣减方案，配合消息队列进行削峰填谷，有效防止超卖现象，支撑百万级用户访问。利用 <strong>WebSocket</strong> 实现“盲盒用户在线霸体”功能，将延迟控制在极低水平。构建了完整的商城、订单、物流、背包系统，并开发了签到、积分、分销、宝箱、排行榜、大富翁等多元化营销活动，大幅提升了用户留存率与平台互动性。
+    </p>
+</div>
+
+<!-- 项目 2 -->
+<div class="project-item">
+    <div class="project-header">
+        <span class="project-name">灵活用工结算平台</span>
+        <span class="project-separator">|</span>
+        <span class="project-role">核心开发</span>
+    </div>
+    <p class="project-desc">
+        面对大规模日流水的资金安全挑战，设计多重签名机制与<strong>分布式事务锁</strong>，确保打款准确性与数据一致性，实现账务零差错。集成阿里云 AI 人脸识别与 OCR 技术，实现用户实名认证全流程自动化，显著提升通过率。通过<strong>MySQL 慢查询分析与索引重构</strong>，优化月度账单生成逻辑，将原本耗时的批处理任务大幅提速，显著提升财务运营效率。
+    </p>
+</div>
+
+<!-- 项目 3 -->
+<div class="project-item">
+    <div class="project-header">
+        <span class="project-name">精铟海洋船舶设备监控系统</span>
+        <span class="project-separator">|</span>
+        <span class="project-role">后端负责人</span>
+    </div>
+    <p class="project-desc">
+        针对海洋工程设备远程监控需求，编写高性能守护进程解析 <strong>UDP/TCP 二进制协议</strong>，实现毫秒级数据入库与异常实时报警。成功将海康威视设备流媒体转发至 Web 端，解决跨域与低带宽下的卡顿问题，实现视频流畅播放。在协议文档缺失的情况下，利用 AI 辅助推导协议逻辑，大幅缩短开发周期，成功交付高可靠性监控系统。
+    </p>
+</div>
+
+<!-- 项目 4 -->
+<div class="project-item">
+    <div class="project-header">
+        <span class="project-name">小金猴维修服务平台</span>
+        <span class="project-separator">|</span>
+        <span class="project-role">核心架构开发</span>
+    </div>
+    <p class="project-desc">
+        打造类美团/饿了么模式的<strong>O2O 家电维修平台</strong>，涵盖微信公众号与 H5 双端。设计了复杂的<strong>订单状态机</strong>，完整闭环“用户下单->附近技工推荐->技师抢单/派单->上门维修->在线支付->双向评价”的全流程业务。基于 <strong>MySQL 空间索引</strong> 与 <strong>Redis</strong> 实现高效的附近技工搜索与距离计算，确保派单响应速度。集成 <strong>微信支付</strong> 实现资金即时结算，并构建多维度的信用评价体系，通过算法加权展示技工评分，有效保障了服务质量与用户信任度，实现了维修服务的标准化与数字化管理。
+    </p>
+</div>
+
+<!-- 项目 5 -->
+<div class="project-item">
+    <div class="project-header">
+        <span class="project-name">房旺旺房产管理与交易系统</span>
+        <span class="project-separator">|</span>
+        <span class="project-role">全栈核心开发</span>
+    </div>
+    <p class="project-desc">
+        基于 <strong>LNMP + ThinkPHP 5</strong> 架构，主导完成了从旧版 TP3.2 公众号系统向 <strong>微信小程序</strong> 的整体迁移重构。在双人团队模式下，独立负责后端核心架构设计与全量接口开发，高效协同前端完成业务闭环。系统深度集成了 <strong>微信支付</strong> 流程，并打通了多元化的第三方硬件与服务接口，包括 云丁/果加智能门锁 控制、智能水电表 数据读取、绿米空调 远程调控、<strong>百度身份证识别</strong> 实名认证以及 <strong>腾讯地图</strong> LBS 服务。通过统一的 API 网关管理复杂的异构设备交互，实现了房源管理、带看签约、智能门禁及佣金结算的全流程数字化，系统上线后运行稳定，极大提升了房产管理的智能化水平。
+    </p>
+</div>
+
+<!-- 教育背景 -->
+<h3>🎓 教育背景 & 证书</h3>
+<ul>
+    <li><strong>华南农业大学</strong> | 计算机科学与技术 | 本科 | <em>2024.09 – 2026.07</em></li>
+    <li><strong>广东机电职业技术学院</strong> | 软件技术 | 专科 | <em>2016.09 – 2019.07</em></li>
+    <li><strong>证书</strong>: 计算机程序设计工程师 (Java 方向)</li>
+</ul>
+
+<!-- 自我评价 -->
+<h3>💡 自我评价</h3>
+<ul>
+    <li><strong>技术驱动</strong>: 不满足于 CRUD，喜欢钻研底层原理与性能极致，对新技术保持敏锐嗅觉，善于解决复杂技术难题。</li>
+    <li><strong>AI 先行者</strong>: 坚信"AI+ 编程”是未来，已在工作中验证了 AI 提效的可行性（代码重构/测试生成/协议解析），致力于推动团队技术升级。</li>
+    <li><strong>全栈闭环</strong>: 具备独立承担项目全生命周期管理的能力，从需求分析、架构设计到运维部署，抗压能力强，沟通高效，尤其在精简团队中能发挥“多面手”的关键作用。</li>
+    <li><strong>核心价值</strong>: 在 AI 重塑行业的当下，坚持“经验为王”。擅长利用 AI 工具大幅缩短基础开发周期，将多年实战经验聚焦于系统架构把控、复杂场景攻坚及团队效能提升，做团队中不可替代的“稳定器”。</li>
+</ul>
+
+</body>
+</html>
