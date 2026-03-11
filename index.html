@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张治通 - 高级PHP开发工程师 | 个人博客</title>
+    <script src="https://image.uc.cn/s/uae/g/3n/mos-production/fontawesome-free-7.1.0-web/js/all.min.js"></script>
+    <script src="https://image.uc.cn/s/uae/g/3n/mos-production/0915/3.4.17.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #0FED00;
+            --primary-dark: #0b9e00;
+            --secondary: #3a86ff;
+            --secondary-dark: #2667cc;
+            --dark-bg: #111111;
+            --darker-bg: #0a0a0a;
+            --light-text: #f0f0f0;
+            --gray-text: #888888;
+            --neon-blue: #00eeff;
+            --neon-purple: #bc00ff;
+            --neon-pink: #ff00c8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* 背景层 - 不可交互 */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* 可交互内容层 */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* 动画类 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px var(--primary); }
+            50% { box-shadow: 0 0 20px var(--primary), 0 0 30px var(--primary-dark); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes shine {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        /* iOS风格弹性动画 */
+        .ios-elastic {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        /* 光泽感效果 */
+        .glossy-effect {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.1) 100%);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glossy-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        /* 粒子背景容器 */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+        
+        /* 视差层 */
+        .parallax-layer {
+            will-change: transform;
+        }
+        
+        /* 霓虹文本效果 */
+        .neon-text {
+            text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary);
+            color: var(--primary);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem !important;
+            }
+            
+            .tech-icon {
+                width: 60px !important;
+                height: 60px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态背景层 -->
+    <div class="background-layer">
+        <canvas id="particle-canvas"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent opacity-80"></div>
+    </div>
+    
+    <!-- 内容层 -->
+    <div class="content-layer">
+        <!-- 导航栏 -->
+        <nav class="fixed top-0 w-full z-50 py-4 px-6 backdrop-blur-md bg-black/30 border-b border-gray-800">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <a href="#home" class="text-2xl font-bold neon-text ios-elastic hover:text-white">ZhangZh.Tong</a>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="ios-elastic hover:text-primary hover:neon-text">首页</a>
+                    <a href="#about" class="ios-elastic hover:text-primary hover:neon-text">关于</a>
+                    <a href="#skills" class="ios-elastic hover:text-primary hover:neon-text">技能栈</a>
+                    <a href="#experience" class="ios-elastic hover:text-primary hover:neon-text">经历</a>
+                    <a href="#projects" class="ios-elastic hover:text-primary hover:neon-text">项目</a>
+                    <a href="#contact" class="ios-elastic hover:text-primary hover:neon-text">联系</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm px-3 py-1 rounded-full bg-gradient-to-r from-primary to-secondary">随时到岗</span>
+                    <button id="theme-toggle" class="p-2 rounded-full bg-gray-800 ios-elastic hover:bg-gray-700">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- 首页/Hero区域 -->
+        <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+                <div class="mb-8">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-4">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-neon-blue to-secondary">张治通</span>
+                    </h1>
+                    <div class="h-1 w-32 bg-gradient-to-r from-primary to-secondary mx-auto mb-6 rounded-full"></div>
+                    <h2 class="text-2xl md:text-3xl font-light mb-6">
+                        <span class="typewriter-text inline-block overflow-hidden whitespace-nowrap border-r-2 border-primary" style="animation: typewriter 3.5s steps(40, end) 1s forwards, blink 0.75s step-end infinite;">高级PHP开发工程师 | 全栈开发者 | AI技术应用探索者</span>
+                    </h2>
+                    <p class="text-gray-300 max-w-3xl mx-auto text-lg md:text-xl mb-10">
+                        一位拥有8年一线开发经验的技术实践者，精通ThinkPHP框架生态，擅长高并发系统架构设计与AI辅助开发流程整合。
+                    </p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="#projects" class="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-primary-dark text-white font-bold shadow-lg ios-elastic hover:shadow-primary/50 hover:transform hover:scale-105 transition-all duration-300">
+                        查看我的项目
+                    </a>
+                    <a href="#contact" class="px-8 py-3 rounded-full border-2 border-primary text-primary font-bold ios-elastic hover:bg-primary/10 hover:transform hover:scale-105 transition-all duration-300">
+                        联系我
+                    </a>
+                </div>
+                
+                <!-- 悬浮装饰元素 -->
+                <div class="absolute top-1/4 left-10 w-4 h-4 rounded-full bg-primary shadow-lg shadow-primary/50 animate-pulse"></div>
+                <div class="absolute top-1/3 right-20 w-6 h-6 rounded-full bg-secondary shadow-lg shadow-secondary/50 animate-pulse" style="animation-delay: 0.5s;"></div>
+                <div class="absolute bottom-1/4 left-1/4 w-3 h-3 rounded-full bg-neon-pink shadow-lg shadow-neon-pink/50 animate-pulse" style="animation-delay: 1s;"></div>
+                
+                <!-- 滚动指示器 -->
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                    <a href="#about" class="flex flex-col items-center text-gray-400 hover:text-primary ios-elastic">
+                        <span class="mb-2">向下探索</span>
+                        <i class="fas fa-chevron-down animate-bounce"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 关于区域 -->
+        <section id="about" class="py-20 px-6 relative">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-4xl md:text-5xl font-bold mb-4">关于<span class="text-primary">我</span></h2>
+                    <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+                    <p class="text-gray-400 mt-6 max-w-3xl mx-auto">技术驱动，追求底层原理与性能极致。坚信"AI+编程"是未来趋势，已在实践中验证其提效价值。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <!-- 个人信息卡片 -->
+                    <div class="col-span-2 glossy-effect p-8 rounded-2xl shadow-xl border border-gray-800 ios-elastic hover:border-primary/50">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-user-circle text-primary mr-3"></i> 个人信息
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-tag text-gray-400 mr-3"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-400">姓名</p>
+                                        <p class="font-bold">张治通</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <i class="fas fa-briefcase text-gray-400 mr-3"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-400">职位</p>
+                                        <p class="font-bold">高级PHP开发工程师 / 项目主程</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <i class="fas fa-map-marker-alt text-gray-400 mr-3"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-400">地点</p>
+                                        <p class="font-bold">广州</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-phone-alt text-gray-400 mr-3"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-400">电话</p>
+                                        <p class="font-bold">13242305375</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope text-gray-400 mr-3"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-400">邮箱</p>
+                                        <p class="font-bold">997097287@qq.com</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <i class="fas fa-graduation-cap text-gray-400 mr-3"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-400">状态</p>
+                                        <p class="font-bold text-primary">随时到岗</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 pt-8 border-t border-gray-800">
+                            <h4 class="text-xl font-bold mb-4">职业理念</h4>
+                            <p class="text-gray-300">
+                                具备独立承担项目全生命周期的能力，在精简团队中发挥"多面手"作用。坚持"经验为王"，将AI用于基础提效，聚焦于复杂场景攻坚与架构把控。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- 教育背景卡片 -->
+                    <div class="glossy-effect p-8 rounded-2xl shadow-xl border border-gray-800 ios-elastic hover:border-secondary/50">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-university text-secondary mr-3"></i> 教育背景
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="border-l-4 border-primary pl-4 py-2">
+                                <h4 class="font-bold text-lg">华南农业大学</h4>
+                                <p class="text-gray-400">计算机科学与技术 (本科在读)</p>
+                                <p class="text-sm text-primary mt-1">2024.09 – 2026.07</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-secondary pl-4 py-2">
+                                <h4 class="font-bold text-lg">广东机电职业技术学院</h4>
+                                <p class="text-gray-400">软件技术 (专科毕业)</p>
+                                <p class="text-sm text-secondary mt-1">2016.09 – 2019.07</p>
+                            </div>
+                            
+                            <div class="border-l-4 border-neon-pink pl-4 py-2">
+                                <h4 class="font-bold text-lg">专业证书</h4>
+                                <p class="text-gray-400">计算机程序设计工程师 (Java方向)</p>
+                                <p class="text-sm text-neon-pink mt-1">专业技术资格认证</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 技能栈区域 -->
+        <section id="skills" class="py-20 px-6 relative bg-gradient-to-b from-transparent to-black/30">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-4xl md:text-5xl font-bold mb-4">技术<span class="text-primary">栈</span></h2>
+                    <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+                    <p class="text-gray-400 mt-6 max-w-3xl mx-auto">深耕PHP全栈开发，积极探索AI技术应用，致力于通过技术创新提升研发效率与系统稳定性。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <!-- 后端技能 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-primary/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-server text-primary text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">后端开发</h3>
+                        </div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-primary mr-2"></div>
+                                <span>PHP 5/7/8</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-primary mr-2"></div>
+                                <span>ThinkPHP (3.2–8.0)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-primary mr-2"></div>
+                                <span>Laravel, Swoole/WebSocket</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- AI与大模型 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-secondary/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-robot text-secondary text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">AI与大模型</h3>
+                        </div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-secondary mr-2"></div>
+                                <span>本地部署 DeepSeek LLM</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-secondary mr-2"></div>
+                                <span>Prompt Engineering</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-secondary mr-2"></div>
+                                <span>AI驱动代码重构与测试生成</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 数据库与缓存 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-neon-pink/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-neon-pink/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-database text-neon-pink text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">数据库与缓存</h3>
+                        </div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-neon-pink mr-2"></div>
+                                <span>MySQL（索引优化、分库分表）</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-neon-pink mr-2"></div>
+                                <span>Redis（缓存策略、消息队列）</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 全栈与运维 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-neon-blue/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-neon-blue/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-code text-neon-blue text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">全栈与运维</h3>
+                        </div>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-neon-blue mr-2"></div>
+                                <span>Vue.js, Uni-app, 微信小程序</span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-neon-blue mr-2"></div>
+                                <span>Docker, Git, Shell, LNMP/LAMP</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 技能进度条 -->
+                <div class="glossy-effect p-8 rounded-2xl border border-gray-800">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-chart-line text-primary mr-3"></i> 核心技能熟练度
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">PHP / ThinkPHP 开发</span>
+                                <span class="text-primary font-bold">95%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-primary to-primary-dark h-3 rounded-full" style="width: 95%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">高并发系统架构</span>
+                                <span class="text-primary font-bold">90%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-primary to-secondary h-3 rounded-full" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">AI辅助开发流程</span>
+                                <span class="text-primary font-bold">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-secondary to-neon-blue h-3 rounded-full" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">全栈开发能力</span>
+                                <span class="text-primary font-bold">88%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-neon-blue to-neon-pink h-3 rounded-full" style="width: 88%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 工作经历区域 -->
+        <section id="experience" class="py-20 px-6 relative">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-4xl md:text-5xl font-bold mb-4">工作<span class="text-primary">经历</span></h2>
+                    <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+                    <p class="text-gray-400 mt-6 max-w-3xl mx-auto">8年一线开发经验，从初级开发成长为项目主程，在多个领域积累了丰富实战经验。</p>
+                </div>
+                
+                <div class="relative">
+                    <!-- 时间轴 -->
+                    <div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 bg-gradient-to-b from-primary via-secondary to-neon-pink"></div>
+                    
+                    <!-- 经历项目 -->
+                    <div class="space-y-12">
+                        <!-- 经历1 -->
+                        <div class="relative">
+                            <div class="md:w-1/2 ml-auto md:pl-16 pl-10">
+                                <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-primary/50 hover:transform hover:-translate-y-1">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 class="text-xl font-bold">高级PHP开发工程师 / 项目主程</h3>
+                                            <p class="text-primary font-medium">广州市哈游·信瀚·源道（集团）</p>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-bold">2022.07 – 2025.12</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-4">
+                                        主导高并发架构演进与资金安全体系建设，引入AI辅助开发流程，提升团队研发效率与系统稳定性。
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">高并发架构</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">AI辅助开发</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">资金安全体系</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">团队领导</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-6 left-0 md:left-1/2 transform md:-translate-x-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-dark-bg"></div>
+                        </div>
+                        
+                        <!-- 经历2 -->
+                        <div class="relative">
+                            <div class="md:w-1/2 md:pr-16 pr-10">
+                                <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-secondary/50 hover:transform hover:-translate-y-1">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 class="text-xl font-bold">PHP开发工程师</h3>
+                                            <p class="text-secondary font-medium">广州房旺旺网络科技有限公司</p>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-full bg-secondary/20 text-secondary text-sm font-bold">2020.08 – 2022.04</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-4">
+                                        主导TP3.2至TP5+小程序迁移，双人团队完成全链路开发。集成智能门锁、水电表、空调控制等多类硬件接口。
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">系统迁移重构</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">硬件接口集成</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">小程序开发</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">全栈开发</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-6 left-0 md:left-1/2 transform md:-translate-x-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-dark-bg"></div>
+                        </div>
+                        
+                        <!-- 经历3 -->
+                        <div class="relative">
+                            <div class="md:w-1/2 ml-auto md:pl-16 pl-10">
+                                <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-neon-pink/50 hover:transform hover:-translate-y-1">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 class="text-xl font-bold">PHP开发工程师</h3>
+                                            <p class="text-neon-pink font-medium">广州金的科技 / 欧轩网络科技</p>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-full bg-neon-pink/20 text-neon-pink text-sm font-bold">2018.07 – 2020.08</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-4">
+                                        支付模块开发，拓展Python/Golang及Laravel/Yii框架能力。积累了丰富的第三方支付集成经验。
+                                    </p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">支付模块开发</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">Python/Golang</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">Laravel/Yii</span>
+                                        <span class="px-3 py-1 rounded-full bg-gray-800 text-xs">第三方支付集成</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute top-6 left-0 md:left-1/2 transform md:-translate-x-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-neon-pink border-4 border-dark-bg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 项目经验区域 -->
+        <section id="projects" class="py-20 px-6 relative bg-gradient-to-b from-transparent to-black/30">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-4xl md:text-5xl font-bold mb-4">重点<span class="text-primary">项目</span></h2>
+                    <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+                    <p class="text-gray-400 mt-6 max-w-3xl mx-auto">主导或参与多个高并发、高复杂度项目，涵盖电商、金融、物联网等多个领域。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 项目1 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-primary/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-box text-primary text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">燎羽潮玩盲盒电商平台</h3>
+                                <p class="text-primary font-medium">项目主程</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 mb-6">
+                            基于Redis Lua脚本防超卖，WebSocket实现低延迟互动，支撑百万级访问的高并发盲盒电商平台。
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs">Redis Lua脚本</span>
+                            <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs">WebSocket</span>
+                            <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs">高并发架构</span>
+                            <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs">盲盒电商</span>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-chart-line mr-2"></i> 支撑百万级日访问量 | <i class="fas fa-bolt mr-2 ml-4"></i> 毫秒级响应
+                        </div>
+                    </div>
+                    
+                    <!-- 项目2 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-secondary/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-money-check-alt text-secondary text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">灵活用工结算平台</h3>
+                                <p class="text-secondary font-medium">核心开发</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 mb-6">
+                            设计多重签名机制保障账务零差错，集成AI人脸识别提升认证通过率。为灵活用工场景提供安全高效的结算解决方案。
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 rounded-full bg-secondary/20 text-secondary text-xs">多重签名机制</span>
+                            <span class="px-3 py-1 rounded-full bg-secondary/20 text-secondary text-xs">AI人脸识别</span>
+                            <span class="px-3 py-1 rounded-full bg-secondary/20 text-secondary text-xs">资金安全</span>
+                            <span class="px-3 py-1 rounded-full bg-secondary/20 text-secondary text-xs">结算系统</span>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-shield-alt mr-2"></i> 零差错账务处理 | <i class="fas fa-robot mr-2 ml-4"></i> AI认证集成
+                        </div>
+                    </div>
+                    
+                    <!-- 项目3 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-neon-pink/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-neon-pink/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-ship text-neon-pink text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">精铟海洋船舶监控系统</h3>
+                                <p class="text-neon-pink font-medium">后端负责人</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 mb-6">
+                            解析UDP/TCP二进制协议，实现毫秒级报警与视频流转发。为船舶监控提供实时、可靠的物联网解决方案。
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 rounded-full bg-neon-pink/20 text-neon-pink text-xs">UDP/TCP协议解析</span>
+                            <span class="px-3 py-1 rounded-full bg-neon-pink/20 text-neon-pink text-xs">毫秒级报警</span>
+                            <span class="px-3 py-1 rounded-full bg-neon-pink/20 text-neon-pink text-xs">视频流转发</span>
+                            <span class="px-3 py-1 rounded-full bg-neon-pink/20 text-neon-pink text-xs">物联网</span>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-broadcast-tower mr-2"></i> 实时监控 | <i class="fas fa-video mr-2 ml-4"></i> 视频流处理
+                        </div>
+                    </div>
+                    
+                    <!-- 项目4 -->
+                    <div class="glossy-effect p-6 rounded-2xl border border-gray-800 ios-elastic hover:border-neon-blue/50 hover:transform hover:-translate-y-2">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-neon-blue/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-tools text-neon-blue text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">小金猴维修服务平台</h3>
+                                <p class="text-neon-blue font-medium">核心架构开发</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 mb-6">
+                            构建O2O全流程闭环，基于空间索引实现高效派单。为维修服务行业提供智能化的线上到线下解决方案。
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 rounded-full bg-neon-blue/20 text-neon-blue text-xs">O2O全流程</span>
+                            <span class="px-3 py-1 rounded-full bg-neon-blue/20 text-neon-blue text-xs">空间索引派单</span>
+                            <span class="px-3 py-1 rounded-full bg-neon-blue/20 text-neon-blue text-xs">维修服务平台</span>
+                            <span class="px-3 py-1 rounded-full bg-neon-blue/20 text-neon-blue text-xs">智能派单</span>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            <i class="fas fa-map-marker-alt mr-2"></i> 空间索引派单 | <i class="fas fa-cogs mr-2 ml-4"></i> O2O闭环
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 联系区域 -->
+        <section id="contact" class="py-20 px-6 relative">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title text-4xl md:text-5xl font-bold mb-4">联系<span class="text-primary">我</span></h2>
+                    <div class="h-1 w-24 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+                    <p class="text-gray-400 mt-6 max-w-3xl mx-auto">如果您有项目合作、技术交流或职位机会，欢迎通过以下方式联系我。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- 联系方式卡片 -->
+                    <div class="glossy-effect p-8 rounded-2xl border border-gray-800">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center">
+                            <i class="fas fa-address-card text-primary mr-3"></i> 联系信息
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-center p-4 rounded-xl bg-gray-900/50 ios-elastic hover:bg-gray-900">
+                                <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                                    <i class="fas fa-phone-alt text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">电话</p>
+                                    <p class="text-lg font-bold">13242305375</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-4 rounded-xl bg-gray-900/50 ios-elastic hover:bg-gray-900">
+                                <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center mr-4">
+                                    <i class="fas fa-envelope text-secondary"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">邮箱</p>
+                                    <p class="text-lg font-bold">997097287@qq.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center p-4 rounded-xl bg-gray-900/50 ios-elastic hover:bg-gray-900">
+                                <div class="w-12 h-12 rounded-lg bg-neon-pink/10 flex items-center justify-center mr-4">
+                                    <i class="fas fa-map-marker-alt text-neon-pink"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">位置</p>
+                                    <p class="text-lg font-bold">广州 · 随时到岗</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-10">
+                            <h4 class="text-xl font-bold mb-4">即刻联系</h4>
+                            <div class="flex space-x-4">
+                                <a href="tel:13242305375" class="flex-1 py-3 rounded-lg bg-gradient-to-r from-primary to-primary-dark text-center font-bold ios-elastic hover:transform hover:scale-105">
+                                    拨打电话
+                                </a>
+                                <a href="mailto:997097287@qq.com" class="flex-1 py-3 rounded-lg border border-primary text-primary text-center font-bold ios-elastic hover:bg-primary/10 hover:transform hover:scale-105">
+                                    发送邮件
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 技能摘要 -->
+                    <div class="glossy-effect p-8 rounded-2xl border border-gray-800">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center">
+                            <i class="fas fa-star text-secondary mr-3"></i> 核心优势
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-4 mt-1">
+                                    <i class="fas fa-bolt text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold mb-2">高并发架构专家</h4>
+                                    <p class="text-gray-400">8年一线开发经验，主导多个百万级访问量项目，精通高并发系统设计与优化。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center mr-4 mt-1">
+                                    <i class="fas fa-robot text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold mb-2">AI辅助开发实践者</h4>
+                                    <p class="text-gray-400">率先将AI技术融入开发流程，本地部署DeepSeek LLM，实践Prompt Engineering提升研发效率。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-neon-pink/20 flex items-center justify-center mr-4 mt-1">
+                                    <i class="fas fa-layer-group text-neon-pink"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold mb-2">全栈多面手</h4>
+                                    <p class="text-gray-400">从前端到后端，从数据库到运维，具备独立承担项目全生命周期的能力。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-neon-blue/20 flex items-center justify-center mr-4 mt-1">
+                                    <i class="fas fa-shield-alt text-neon-blue"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold mb-2">安全与稳定性保障</h4>
+                                    <p class="text-gray-400">设计多重签名机制保障资金安全，构建完善监控体系确保系统稳定运行。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer class="py-10 px-6 border-t border-gray-800">
+            <div class="max-w-7xl mx-auto text-center">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                    <div class="mb-6 md:mb-0">
+                        <h2 class="text-2xl font-bold neon-text">ZhangZh.Tong</h2>
+                        <p class="text-gray-400 mt-2">高级PHP开发工程师 | 全栈开发者 | AI技术应用探索者</p>
+                    </div>
+                    
+                    <div class="flex space-x-6">
+                        <a href="#home" class="text-gray-400 hover:text-primary ios-elastic">首页</a>
+                        <a href="#about" class="text-gray-400 hover:text-primary ios-elastic">关于</a>
+                        <a href="#skills" class="text-gray-400 hover:text-primary ios-elastic">技能</a>
+                        <a href="#experience" class="text-gray-400 hover:text-primary ios-elastic">经历</a>
+                        <a href="#projects" class="text-gray-400 hover:text-primary ios-elastic">项目</a>
+                    </div>
+                </div>
+                
+                <div class="text-gray-500 text-sm">
+                    <p>© 2025 张治通个人博客. 所有内容基于真实简历信息.</p>
+                    <p class="mt-2">本站采用荧光绿+深空黑冲突配色方案，融合五种动画效果，体现科技感与iOS式动效美学。</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // 粒子背景实现
+        class ParticleBackground {
+            constructor() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: null, y: null, radius: 150 };
+                
+                this.init();
+                this.animate();
+                this.bindEvents();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                this.createParticles();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            createParticles() {
+                const particleCount = Math.min(150, Math.floor(window.innerWidth * window.innerHeight / 10000));
+                this.particles = [];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const x = Math.random() * this.canvas.width;
+                    const y = Math.random() * this.canvas.height;
+                    const size = Math.random() * 2 + 0.5;
+                    const speedX = (Math.random() - 0.5) * 0.5;
+                    const speedY = (Math.random() - 0.5) * 0.5;
+                    const color = Math.random() > 0.7 ? '#3a86ff' : '#ffffff';
+                    
+                    this.particles.push({
+                        x, y, size,
+                        speedX, speedY,
+                        originalX: x,
+                        originalY: y,
+                        color
+                    });
+                }
+            }
+            
+            bindEvents() {
+                window.addEventListener('resize', () => {
+                    this.resizeCanvas();
+                    this.createParticles();
+                });
+                
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.x;
+                    this.mouse.y = e.y;
+                });
+                
+                window.addEventListener('mouseout', () => {
+                    this.mouse.x = null;
+                    this.mouse.y = null;
+                });
+                
+                // 点击产生粒子爆炸效果
+                window.addEventListener('click', (e) => {
+                    this.mouse.x = e.x;
+                    this.mouse.y = e.y;
+                    
+                    // 给粒子添加爆炸效果
+                    this.particles.forEach(particle => {
+                        const dx = particle.x - this.mouse.x;
+                        const dy = particle.y - this.mouse.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 100) {
+                            const force = (100 - distance) / 100;
+                            const angle = Math.atan2(dy, dx);
+                            
+                            particle.speedX = Math.cos(angle) * force * 5;
+                            particle.speedY = Math.sin(angle) * force * 5;
+                        }
+                    });
+                });
+            }
+            
+            drawParticles() {
+                this.particles.forEach(particle => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.fill();
+                });
+            }
+            
+            drawLines() {
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const dx = this.particles[i].x - this.particles[j].x;
+                        const dy = this.particles[i].y - this.particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 150) {
+                            this.ctx.beginPath();
+                            this.ctx.strokeStyle = `rgba(58, 134, 255, ${0.2 * (1 - distance/150)})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            updateParticles() {
+                this.particles.forEach(particle => {
+                    // 鼠标交互
+                    if (this.mouse.x && this.mouse.y) {
+                        const dx = particle.x - this.mouse.x;
+                        const dy = particle.y - this.mouse.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < this.mouse.radius) {
+                            const angle = Math.atan2(dy, dx);
+                            const force = (this.mouse.radius - distance) / this.mouse.radius;
+                            
+                            particle.x += Math.cos(angle) * force * 2;
+                            particle.y += Math.sin(angle) * force * 2;
+                        }
+                    }
+                    
+                    // 粒子运动
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    // 边界检查
+                    if (particle.x > this.canvas.width || particle.x < 0) {
+                        particle.speedX = -particle.speedX * 0.9;
+                    }
+                    
+                    if (particle.y > this.canvas.height || particle.y < 0) {
+                        particle.speedY = -particle.speedY * 0.9;
+                    }
+                    
+                    // 缓慢回归原始位置
+                    const dx = particle.originalX - particle.x;
+                    const dy = particle.originalY - particle.y;
+                    particle.x += dx * 0.01;
+                    particle.y += dy * 0.01;
+                    
+                    // 速度衰减
+                    particle.speedX *= 0.99;
+                    particle.speedY *= 0.99;
+                });
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.fillStyle = 'rgba(17, 17, 17, 0.1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.drawLines();
+                this.drawParticles();
+                this.updateParticles();
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // 视差滚动效果
+        class ParallaxScroll {
+            constructor() {
+                this.sections = document.querySelectorAll('section');
+                this.backgroundLayer = document.querySelector('.background-layer');
+                this.init();
+            }
+            
+            init() {
+                window.addEventListener('scroll', () => {
+                    this.applyParallax();
+                });
+                
+                this.applyParallax();
+            }
+            
+            applyParallax() {
+                const scrolled = window.pageYOffset;
+                
+                // 背景层轻微移动
+                if (this.backgroundLayer) {
+                    this.backgroundLayer.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+                
+                // 各个区域元素视差效果
+                this.sections.forEach(section => {
+                    const speed = section.getAttribute('data-speed') || 0.3;
+                    const yPos = -(scrolled * speed);
+                    section.style.backgroundPosition = `center ${yPos}px`;
+                    
+                    // 区域内的装饰元素
+                    const decorElements = section.querySelectorAll('.parallax-layer');
+                    decorElements.forEach(el => {
+                        const elSpeed = el.getAttribute('data-speed') || 0.5;
+                        const elYPos = -(scrolled * elSpeed);
+                        el.style.transform = `translateY(${elYPos}px)`;
+                    });
+                });
+            }
+        }
+        
+        // iOS风格弹性交互
+        class IOSElasticInteractions {
+            constructor() {
+                this.elasticElements = document.querySelectorAll('.ios-elastic');
+                this.init();
+            }
+            
+            init() {
+                this.elasticElements.forEach(el => {
+                    // 点击效果
+                    el.addEventListener('mousedown', () => {
+                        el.style.transform = 'scale(0.95)';
+                    });
+                    
+                    el.addEventListener('mouseup', () => {
+                        el.style.transform = '';
+                    });
+                    
+                    el.addEventListener('mouseleave', () => {
+                        el.style.transform = '';
+                    });
+                    
+                    // 悬停光泽效果
+                    if (el.classList.contains('glossy-effect')) {
+                        el.addEventListener('mouseenter', () => {
+                            el.style.boxShadow = '0 10px 30px rgba(15, 237, 0, 0.3)';
+                        });
+                        
+                        el.addEventListener('mouseleave', () => {
+                            el.style.boxShadow = '';
+                        });
+                    }
+                });
+            }
+        }
+        
+        // 页面转场效果
+        class PageTransitions {
+            constructor() {
+                this.links = document.querySelectorAll('a[href^="#"]');
+                this.init();
+            }
+            
+            init() {
+                this.links.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute('href');
+                        
+                        if (targetId === '#') return;
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (!targetElement) return;
+                        
+                        // 添加转场动画
+                        document.body.style.opacity = '0.8';
+                        document.body.style.transition = 'opacity 0.3s ease';
+                        
+                        setTimeout(() => {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            
+                            document.body.style.opacity = '1';
+                        }, 100);
+                        
+                        // 导航栏活跃状态更新
+                        this.updateActiveNav(link);
+                    });
+                });
+            }
+            
+            updateActiveNav(activeLink) {
+                const navLinks = document.querySelectorAll('nav a');
+                navLinks.forEach(link => {
+                    link.classList.remove('text-primary', 'neon-text');
+                });
+                
+                activeLink.classList.add('text-primary', 'neon-text');
+            }
+        }
+        
+        // 图标弹出动画
+        class IconAnimations {
+            constructor() {
+                this.icons = document.querySelectorAll('.tech-icon, .fas, .fab');
+                this.init();
+            }
+            
+            init() {
+                // 初始动画
+                setTimeout(() => {
+                    this.icons.forEach((icon, index) => {
+                        setTimeout(() => {
+                            icon.style.transform = 'scale(1)';
+                            icon.style.opacity = '1';
+                        }, index * 50);
+                    });
+                }, 500);
+                
+                // 悬停动画
+                this.icons.forEach(icon => {
+                    icon.addEventListener('mouseenter', () => {
+                        icon.style.transform = 'scale(1.2) translateY(-5px)';
+                        icon.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        
+                        if (icon.classList.contains('fa-robot')) {
+                            icon.style.color = '#00eeff';
+                        }
+                    });
+                    
+                    icon.addEventListener('mouseleave', () => {
+                        icon.style.transform = 'scale(1) translateY(0)';
+                        
+                        if (icon.classList.contains('fa-robot')) {
+                            icon.style.color = '';
+                        }
+                    });
+                });
+            }
+        }
+        
+        // 主题切换
+        class ThemeManager {
+            constructor() {
+                this.themeToggle = document.getElementById('theme-toggle');
+                this.currentTheme = 'dark';
+                this.themes = {
+                    dark: {
+                        primary: '#0FED00',
+                        secondary: '#3a86ff',
+                        bg: '#111111'
+                    },
+                    cyber: {
+                        primary: '#FF00C8',
+                        secondary: '#00EEFF',
+                        bg: '#0A0A0A'
+                    },
+                    neon: {
+                        primary: '#00FF9D',
+                        secondary: '#FFD166',
+                        bg: '#1A1A2E'
+                    }
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.themeToggle.addEventListener('click', () => {
+                    this.cycleTheme();
+                });
+            }
+            
+            cycleTheme() {
+                const themeKeys = Object.keys(this.themes);
+                const currentIndex = themeKeys.indexOf(this.currentTheme);
+                const nextIndex = (currentIndex + 1) % themeKeys.length;
+                this.currentTheme = themeKeys[nextIndex];
+                
+                this.applyTheme(this.themes[this.currentTheme]);
+                
+                // 按钮动画
+                this.themeToggle.style.transform = 'rotate(180deg)';
+                setTimeout(() => {
+                    this.themeToggle.style.transform = '';
+                }, 300);
+                
+                // 更新按钮图标
+                const icons = ['fa-palette', 'fa-moon', 'fa-sun'];
+                this.themeToggle.innerHTML = `<i class="fas ${icons[nextIndex]}"></i>`;
+            }
+            
+            applyTheme(theme) {
+                document.documentElement.style.setProperty('--primary', theme.primary);
+                document.documentElement.style.setProperty('--primary-dark', this.darkenColor(theme.primary, 20));
+                document.documentElement.style.setProperty('--secondary', theme.secondary);
+                document.documentElement.style.setProperty('--dark-bg', theme.bg);
+                
+                // 添加主题切换动画
+                document.body.style.opacity = '0.8';
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                }, 200);
+            }
+            
+            darkenColor(color, percent) {
+                const num = parseInt(color.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) - amt;
+                const G = (num >> 8 & 0x00FF) - amt;
+                const B = (num & 0x0000FF) - amt;
+                
+                return "#" + (
+                    0x1000000 +
+                    (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+                    (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+                    (B < 255 ? (B < 1 ? 0 : B) : 255)
+                ).toString(16).slice(1);
+            }
+        }
+        
+        // 滚动激活区域高亮
+        class ScrollSpy {
+            constructor() {
+                this.sections = document.querySelectorAll('section');
+                this.navLinks = document.querySelectorAll('nav a[href^="#"]');
+                this.init();
+            }
+            
+            init() {
+                window.addEventListener('scroll', () => {
+                    this.highlightCurrentSection();
+                });
+                
+                this.highlightCurrentSection();
+            }
+            
+            highlightCurrentSection() {
+                let currentSection = '';
+                
+                this.sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+                
+                this.navLinks.forEach(link => {
+                    link.classList.remove('text-primary', 'neon-text');
+                    if (link.getAttribute('href') === `#${currentSection}`) {
+                        link.classList.add('text-primary', 'neon-text');
+                    }
+                });
+            }
+        }
+        
+        // 打字机效果
+        class TypewriterEffect {
+            constructor() {
+                this.typewriterText = document.querySelector('.typewriter-text');
+                this.init();
+            }
+            
+            init() {
+                if (this.typewriterText) {
+                    // 设置初始状态
+                    this.typewriterText.style.width = '0';
+                    this.typewriterText.style.animation = 'typewriter 3.5s steps(40, end) 1s forwards, blink 0.75s step-end infinite';
+                    
+                    // 添加光标闪烁动画
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes blink {
+                            0%, 100% { border-color: transparent; }
+                            50% { border-color: var(--primary); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+        }
+        
+        // 页面加载完成后初始化所有功能
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化粒子背景
+            const particleBg = new ParticleBackground();
+            
+            // 初始化视差滚动
+            const parallaxScroll = new ParallaxScroll();
+            
+            // 初始化iOS弹性交互
+            const iosInteractions = new IOSElasticInteractions();
+            
+            // 初始化页面转场
+            const pageTransitions = new PageTransitions();
+            
+            // 初始化图标动画
+            const iconAnimations = new IconAnimations();
+            
+            // 初始化主题管理
+            const themeManager = new ThemeManager();
+            
+            // 初始化滚动监听
+            const scrollSpy = new ScrollSpy();
+            
+            // 初始化打字机效果
+            const typewriterEffect = new TypewriterEffect();
+            
+            // 添加加载动画
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.8s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+            
+            // 控制台欢迎信息
+            console.log('%c👨‍💻 张治通的个人博客已加载完成！', 'color: #0FED00; font-size: 16px; font-weight: bold;');
+            console.log('%c🎨 采用荧光绿+深空黑冲突配色方案', 'color: #3a86ff;');
+            console.log('%c🚀 包含粒子背景、视差滚动、弹性交互等五种动画效果', 'color: #FF00C8;');
+        });
+    </script>
+</body>
+</html>
